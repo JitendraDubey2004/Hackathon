@@ -67,17 +67,6 @@ Database:
 - View stock history
 - View order list
 
-## Demo URLs
-
-Frontend:
-- Home: http://localhost:5173/
-- Shop: http://localhost:5173/shop
-- Admin portal: http://localhost:5173/admin-portal
-- Admin dashboard: http://localhost:5173/admin/dashboard
-
-Backend:
-- API base: http://localhost:5000/api
-- Health: http://localhost:5000/api/health
 
 ## Demo Credentials (Local Hackathon Use)
 
