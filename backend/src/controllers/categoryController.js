@@ -1,4 +1,5 @@
 const Category = require("../models/Category");
+const Product = require("../models/Product");
 const { getCategoryFallbackImage } = require("../services/imageFallbacks");
 
 function buildCategoryPayload(body) {
@@ -95,6 +96,8 @@ async function deleteCategory(req, res, next) {
         errorCode: "CATEGORY_NOT_FOUND"
       });
     }
+
+    await Product.deleteMany({ category: deletedCategory._id });
 
     return res.status(200).json({ message: "Category deleted" });
   } catch (error) {

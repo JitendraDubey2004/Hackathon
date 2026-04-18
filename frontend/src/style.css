@@ -996,6 +996,10 @@ textarea {
   padding: 0;
 }
 
+.danger-btn {
+  color: var(--danger);
+}
+
 .empty-page {
   text-align: center;
 }

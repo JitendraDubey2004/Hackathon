@@ -59,6 +59,26 @@ export default function AdminDashboardPage() {
     }
   });
 
+  const deleteCategoryMutation = useMutation({
+    mutationFn: (categoryId) => api.deleteCategory(session.token, categoryId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      await queryClient.invalidateQueries({ queryKey: ["home-content"] });
+      await queryClient.invalidateQueries({ queryKey: ["shop-categories"] });
+      setToast({ type: "success", message: "Category deleted." });
+    }
+  });
+
+  const deleteProductMutation = useMutation({
+    mutationFn: (productId) => api.deleteProduct(session.token, productId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      await queryClient.invalidateQueries({ queryKey: ["home-content"] });
+      await queryClient.invalidateQueries({ queryKey: ["shop-products"] });
+      setToast({ type: "success", message: "Product deleted." });
+    }
+  });
+
   if (session?.role !== "admin") {
     return <Navigate to="/admin/login" replace />;
   }
@@ -207,8 +227,22 @@ export default function AdminDashboardPage() {
           <div className="orders-list">
             {categories.map((category) => (
               <div key={category._id} className="order-card">
-                <strong>{category.name}</strong>
-                <span>{category.categoryId}</span>
+                <div>
+                  <strong>{category.name}</strong>
+                  <span>{category.categoryId}</span>
+                </div>
+                <button
+                  type="button"
+                  className="link-btn danger-btn"
+                  onClick={() => {
+                    const confirmed = window.confirm(`Delete category ${category.name}? This will remove it from the database.`);
+                    if (!confirmed) return;
+                    deleteCategoryMutation.mutate(category._id);
+                  }}
+                  disabled={deleteCategoryMutation.isPending}
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
@@ -219,8 +253,22 @@ export default function AdminDashboardPage() {
           <div className="orders-list">
             {products.map((product) => (
               <div key={product.id} className="order-card">
-                <strong>{product.title}</strong>
-                <span>{money(product.cost)}</span>
+                <div>
+                  <strong>{product.title}</strong>
+                  <span>{money(product.cost)}</span>
+                </div>
+                <button
+                  type="button"
+                  className="link-btn danger-btn"
+                  onClick={() => {
+                    const confirmed = window.confirm(`Delete product ${product.title}? This will remove it from the database.`);
+                    if (!confirmed) return;
+                    deleteProductMutation.mutate(product.id);
+                  }}
+                  disabled={deleteProductMutation.isPending}
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
