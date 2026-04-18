@@ -1,4 +1,5 @@
 const Category = require("../models/Category");
+const { getCategoryFallbackImage } = require("../services/imageFallbacks");
 
 function buildCategoryPayload(body) {
   const name = body.name?.trim();
@@ -28,7 +29,12 @@ async function createCategory(req, res, next) {
 async function listCategories(req, res, next) {
   try {
     const categories = await Category.find().sort({ createdAt: -1 });
-    return res.status(200).json(categories);
+    return res.status(200).json(
+      categories.map((category) => ({
+        ...category.toObject(),
+        logo: category.logo || getCategoryFallbackImage(category.categoryId || category.name)
+      }))
+    );
   } catch (error) {
     return next(error);
   }
@@ -44,7 +50,10 @@ async function getCategoryById(req, res, next) {
       });
     }
 
-    return res.status(200).json(category);
+    return res.status(200).json({
+      ...category.toObject(),
+      logo: category.logo || getCategoryFallbackImage(category.categoryId || category.name)
+    });
   } catch (error) {
     return next(error);
   }

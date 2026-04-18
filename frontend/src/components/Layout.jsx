@@ -1,16 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAppStore } from "../context/AppStore";
-
-const navItems = [
-  { to: "/", label: "Home" },
-  { to: "/shop", label: "Shop" },
-  { to: "/auth/login", label: "Login" },
-  { to: "/auth/signup", label: "Sign up" },
-  { to: "/cart", label: "Cart" },
-  { to: "/orders", label: "Orders" },
-  { to: "/admin/login", label: "Admin" }
-];
 
 function roleLabel(session) {
   if (session?.role === "admin") return "Admin";
@@ -21,6 +11,12 @@ function roleLabel(session) {
 export default function Layout() {
   const { session, cartCount, signOut, toast, setToast } = useAppStore();
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  const userName = session?.user?.name || session?.admin?.name || "Guest";
+  const userEmail = session?.user?.email || session?.admin?.email || "";
+  const userInitial = userName.charAt(0).toUpperCase();
 
   useEffect(() => {
     if (!toast) {
@@ -31,38 +27,91 @@ export default function Layout() {
     return () => clearTimeout(timer);
   }, [toast, setToast]);
 
+  useEffect(() => {
+    const handleOutside = (event) => {
+      if (!menuRef.current || menuRef.current.contains(event.target)) {
+        return;
+      }
+
+      setMenuOpen(false);
+    };
+
+    window.addEventListener("pointerdown", handleOutside);
+    return () => window.removeEventListener("pointerdown", handleOutside);
+  }, []);
+
   return (
     <div className="app-frame">
       <header className="site-header">
         <div>
-          <p className="brand-kicker">Runway Portal</p>
           <div className="brand-row">
-            <h1>Myntra-style fashion commerce</h1>
+            <h1>Fashion Tech Riders</h1>
             <span className="status-dot" />
           </div>
           <p className="brand-subtitle">
-            Separate user, cart, orders, and admin URLs with live backend integration.
+            All in one fashion platform for all ages and styles.
           </p>
         </div>
 
-        <div className="header-meta">
-          <span className="pill">{roleLabel(session)}</span>
-          <span className="pill">Cart {cartCount}</span>
-          {session ? (
-            <button type="button" className="secondary-btn" onClick={signOut}>
-              Logout
+        <div className="header-meta" ref={menuRef}>
+          <div className="account-shortcuts">
+            <NavLink to="/" className={({ isActive }) => `quick-link ${isActive ? "active" : ""}`}>
+              Home
+            </NavLink>
+            <NavLink to="/auth/signup" className={({ isActive }) => `quick-link ${isActive ? "active" : ""}`}>
+              Sign up
+            </NavLink>
+            <NavLink to="/auth/login" className={({ isActive }) => `quick-link ${isActive ? "active" : ""}`}>
+              Login
+            </NavLink>
+            <button
+              type="button"
+              className="avatar-btn"
+              aria-label="Open account menu"
+              onClick={() => setMenuOpen((current) => !current)}
+            >
+              {userInitial}
             </button>
+          </div>
+
+          {menuOpen ? (
+            <div className="account-menu card-glass">
+              <div className="account-heading">
+                <strong>{userName}</strong>
+                <span>{userEmail || roleLabel(session)}</span>
+              </div>
+              <div className="account-grid">
+                <NavLink to="/cart" className="menu-link" onClick={() => setMenuOpen(false)}>
+                  Cart details: {cartCount} item(s)
+                </NavLink>
+                <NavLink to="/orders" className="menu-link" onClick={() => setMenuOpen(false)}>
+                  Orders and bookings
+                </NavLink>
+                <NavLink to="/shop" className="menu-link" onClick={() => setMenuOpen(false)}>
+                  Continue shopping
+                </NavLink>
+                {session?.role === "admin" ? (
+                  <NavLink to="/admin/dashboard" className="menu-link" onClick={() => setMenuOpen(false)}>
+                    Admin dashboard
+                  </NavLink>
+                ) : null}
+              </div>
+              {session ? (
+                <button
+                  type="button"
+                  className="secondary-btn full-width"
+                  onClick={() => {
+                    signOut();
+                    setMenuOpen(false);
+                  }}
+                >
+                  Logout
+                </button>
+              ) : null}
+            </div>
           ) : null}
         </div>
       </header>
-
-      <nav className="top-nav" aria-label="Main navigation">
-        {navItems.map((item) => (
-          <NavLink key={item.to} to={item.to} className={({ isActive }) => `nav-pill ${isActive ? "active" : ""}`}>
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
 
       <main className="page-shell" data-route={location.pathname}>
         <Outlet />

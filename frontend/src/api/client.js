@@ -57,7 +57,12 @@ export const api = {
   reorder: async (token, id) =>
     unwrap(await http.post(`/orders/${id}/reorder`, {}, { headers: authHeaders(token) })),
   listAllOrders: async (token, params = {}) =>
-    unwrap(await http.get("/orders/admin/all", { headers: authHeaders(token), params }))
+    unwrap(await http.get("/orders/admin/all", { headers: authHeaders(token), params })),
+  
+  getHomeContent: async () => {
+    const { data } = await http.get("/content/home");
+    return data;
+  },
 };
 
 export { baseURL, apiKey };

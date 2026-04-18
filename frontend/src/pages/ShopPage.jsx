@@ -1,13 +1,13 @@
-import { useMemo } from "react";
-import Fuse from "fuse.js";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import ProductCard from "../components/ProductCard";
 import { normalizeProduct } from "../utils/shop";
 import { useAppStore } from "../context/AppStore";
 
 export default function ShopPage() {
+  const navigate = useNavigate();
   const { addToCart } = useAppStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("q") || "";
@@ -15,28 +15,19 @@ export default function ShopPage() {
   const limit = Number(searchParams.get("limit") || 12);
 
   const categoriesQuery = useQuery({ queryKey: ["shop-categories"], queryFn: api.listCategories });
-  const productsQuery = useQuery({ queryKey: ["shop-products", limit], queryFn: () => api.listProducts({ page: 1, limit: limit + 12 }) });
+  const productsQuery = useQuery({
+    queryKey: ["shop-products", limit, search, categoryId],
+    queryFn: () =>
+      api.listProducts({
+        page: 1,
+        limit,
+        search,
+        category: categoryId
+      })
+  });
 
   const categories = categoriesQuery.data || [];
   const products = (productsQuery.data?.items || []).map(normalizeProduct);
-
-  const filteredProducts = useMemo(() => {
-    let items = products;
-
-    if (categoryId) {
-      items = items.filter((product) => product.categoryId === categoryId);
-    }
-
-    if (search.trim()) {
-      const fuse = new Fuse(items, {
-        keys: ["title", "description", "categoryName", "productId"],
-        threshold: 0.3
-      });
-      items = fuse.search(search.trim()).map((result) => result.item);
-    }
-
-    return items;
-  }, [products, search, categoryId]);
 
   const updateParam = (key, value) => {
     const next = new URLSearchParams(searchParams);
@@ -81,10 +72,25 @@ export default function ShopPage() {
       </section>
 
       <section className="products-grid">
-        {filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} onAction={addToCart} />
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onAction={addToCart}
+            onSecondaryAction={(item) => {
+              addToCart(item);
+              navigate("/cart");
+            }}
+          />
         ))}
       </section>
+
+      {products.length === 0 ? (
+        <div className="empty-page card-glass">
+          <h2>No products found</h2>
+          <p>Try another category or search term.</p>
+        </div>
+      ) : null}
 
       <div className="load-more-wrap">
         <button type="button" className="secondary-btn" onClick={() => updateParam("limit", String(limit + 12))}>

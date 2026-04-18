@@ -71,7 +71,7 @@ export default function CartPage() {
         </div>
 
         <aside className="summary-card">
-          <h3>Booking summary</h3>
+          <h3>Quick checkout</h3>
           <div className="summary-row">
             <span>Items</span>
             <strong>{cartItems.length}</strong>
@@ -81,7 +81,7 @@ export default function CartPage() {
             <strong>{money(total)}</strong>
           </div>
           <button type="button" className="primary-btn full-width" onClick={handleCheckout} disabled={checkoutMutation.isPending}>
-            Book now
+            {checkoutMutation.isPending ? "Placing order..." : "Complete order"}
           </button>
         </aside>
       </div>

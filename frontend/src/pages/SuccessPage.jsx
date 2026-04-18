@@ -11,12 +11,12 @@ export default function SuccessPage() {
       <p className="eyebrow">Booking successful</p>
       <h2>Order {orderNumber} confirmed</h2>
       <p>
-        Your fashion booking was placed successfully. You can revisit your orders page or continue shopping for more looks.
+        Your fashion booking was placed successfully and stored in the database. You can revisit your orders page or continue shopping for more looks.
       </p>
       {order ? (
         <div className="success-summary">
           <div>
-            <span>Total</span>
+            <span>Total (INR)</span>
             <strong>{money(order.grandTotal)}</strong>
           </div>
           <div>

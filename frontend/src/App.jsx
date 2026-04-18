@@ -23,6 +23,7 @@ export default function App() {
         <Route path="cart" element={<CartPage />} />
         <Route path="orders" element={<OrdersPage />} />
         <Route path="admin" element={<Navigate to="/admin/login" replace />} />
+        <Route path="admin-portal" element={<Navigate to="/admin/login" replace />} />
         <Route path="admin/login" element={<AdminLoginPage />} />
         <Route
           path="admin/dashboard"

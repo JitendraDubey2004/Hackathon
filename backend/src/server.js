@@ -9,6 +9,7 @@ const connectDB = require("./config/db");
 const routes = require("./routes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const { seedDefaultAdmin } = require("./services/seedAdminService");
+const { seedCatalog } = require("./services/seedCatalogService");
 
 dotenv.config();
 
@@ -59,6 +60,7 @@ async function startServer() {
   try {
     await connectDB();
     await seedDefaultAdmin();
+    await seedCatalog();
 
     app.listen(PORT, () => {
       console.log(`API listening on port ${PORT}`);

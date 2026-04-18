@@ -164,8 +164,13 @@ export default function AdminDashboardPage() {
           <h3>Stock update</h3>
           <form className="form-grid" onSubmit={(event) => { event.preventDefault(); updateStockMutation.mutate({ productId: stockForm.productId, payload: { stock: stockForm.stock, reason: stockForm.reason } }); }}>
             <label>
-              Product ID
-              <input value={stockForm.productId} onChange={(e) => setStockForm((current) => ({ ...current, productId: e.target.value }))} />
+              Product
+              <select value={stockForm.productId} onChange={(e) => setStockForm((current) => ({ ...current, productId: e.target.value }))}>
+                <option value="">Select product</option>
+                {products.map((product) => (
+                  <option key={product.id} value={product.id}>{product.title} ({product.productId})</option>
+                ))}
+              </select>
             </label>
             <label>
               Stock
@@ -175,7 +180,7 @@ export default function AdminDashboardPage() {
               Reason
               <input value={stockForm.reason} onChange={(e) => setStockForm((current) => ({ ...current, reason: e.target.value }))} />
             </label>
-            <button type="submit" className="primary-btn full-width">Update stock</button>
+            <button type="submit" className="primary-btn full-width" disabled={!stockForm.productId}>Update stock</button>
           </form>
         </article>
 

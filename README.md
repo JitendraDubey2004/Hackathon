@@ -1,64 +1,164 @@
-# Retail Portal - Environment Setup
+# Fashion Tech Riders
 
-This workspace is prepared for a full-stack Retail Portal:
+Production-style full-stack fashion commerce platform built for hackathon evaluation.
 
-- Frontend: React + Vite SPA
-- Backend: Node.js + Express API
-- Database: MongoDB Atlas
+This project demonstrates:
+- A complete customer journey from browse to order placement.
+- A separate admin workflow for catalog and inventory management.
+- Live MongoDB-backed content and transactions.
 
-## Project Structure
+## Problem Statement
 
-- `frontend/` - React SPA
-- `backend/` - Express API
-- `docker-compose.yml` - Optional local MongoDB service for development
+Modern retail applications require:
+- Fast product discovery.
+- Secure role-based access for customers and admins.
+- Reliable order flow and inventory control.
+- A clean and responsive user experience suitable for real users.
 
-## Prerequisites
+Fashion Tech Riders addresses these needs through a modular full-stack architecture.
 
+## Key Highlights
+
+- Customer and admin flows are separated by routes and role-based guards.
+- Products, categories, and homepage content are fetched from backend APIs.
+- Cart, order placement, reorder, and order history are implemented.
+- Admin dashboard supports category creation, product management, and stock updates.
+- INR pricing is consistently displayed across customer pages.
+- MongoDB Atlas is integrated for persistent data storage.
+
+## Technology Stack
+
+Frontend:
+- React (Vite)
+- React Router
+- TanStack Query
+- Axios
+
+Backend:
+- Node.js
+- Express
+- Mongoose
+- JWT auth + API key middleware
+
+Database:
+- MongoDB Atlas
+
+## Architecture Overview
+
+- frontend/: customer + admin web UI
+- backend/: REST APIs, controllers, models, middleware
+- backend/src/models/: Category, Product, Order, User, Admin, StockHistory
+- backend/src/controllers/: auth, catalog, inventory, orders, content
+
+## Feature Coverage
+
+### Customer
+- Signup and login
+- Browse products by category and search
+- Add to cart and buy now flow
+- Place order
+- View orders and reorder
+
+### Admin
+- Admin login
+- Create categories
+- Create products
+- Update stock with reason tracking
+- View stock history
+- View order list
+
+## Demo URLs
+
+Frontend:
+- Home: http://localhost:5173/
+- Shop: http://localhost:5173/shop
+- Admin portal: http://localhost:5173/admin-portal
+- Admin dashboard: http://localhost:5173/admin/dashboard
+
+Backend:
+- API base: http://localhost:5000/api
+- Health: http://localhost:5000/api/health
+
+## Demo Credentials (Local Hackathon Use)
+
+Admin:
+- Email: admin@example.com
+- Password: ChangeMe123!
+
+Note: These are development credentials from environment configuration. Replace before any public deployment.
+
+## Setup Instructions
+
+Prerequisites:
 - Node.js 20+
 - npm 10+
-- MongoDB Atlas account or a local MongoDB instance
+- MongoDB Atlas connection string
 
-## Environment Variables
+1. Install dependencies
 
-### Backend
+```bash
+npm install
+npm install --prefix frontend
+npm install --prefix backend
+```
 
-1. Copy `backend/.env.example` to `backend/.env`.
-2. Replace `MONGODB_URI` with your MongoDB Atlas connection string.
-3. Update secret values (`JWT_SECRET`, `API_KEY`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`).
+2. Configure environment files
 
-### Frontend
+Backend:
+- Copy backend/.env.example to backend/.env
+- Set MONGODB_URI, JWT_SECRET, API_KEY, ADMIN_EMAIL, ADMIN_PASSWORD
 
-1. Copy `frontend/.env.example` to `frontend/.env`.
-2. Ensure `VITE_API_BASE_URL` points to backend URL.
+Frontend:
+- Copy frontend/.env.example to frontend/.env
+- Set VITE_API_BASE_URL to http://localhost:5000/api
 
-## Run Locally
+3. Run the project
 
-1. Start frontend + backend together:
-   - `npm run dev`
+```bash
+npm run dev
+```
 
-If you want a local MongoDB container instead of Atlas, you can still run:
+4. Build frontend for final check
 
-- `docker compose up -d`
+```bash
+npm run build --prefix frontend
+```
 
-## Available Scripts
+## API Surface (Core)
 
-- Root: `npm run dev`, `npm run dev:frontend`, `npm run dev:backend`
-- Frontend: `npm run dev --prefix frontend`
-- Backend: `npm run dev --prefix backend`
+Auth:
+- POST /api/auth/signup
+- POST /api/auth/login
+- POST /api/admin/login
 
-## Starter Health Check
+Catalog:
+- GET /api/content/home
+- GET /api/categories
+- GET /api/products
 
-- Backend health endpoint: `GET http://localhost:5000/api/health`
+Admin Catalog:
+- POST /api/admin/categories
+- PUT /api/admin/categories/:id
+- DELETE /api/admin/categories/:id
+- POST /api/admin/products
+- PUT /api/admin/products/:id
+- PATCH /api/admin/products/:id/stock
+- DELETE /api/admin/products/:id
 
-## Backend API Layout
+Orders:
+- POST /api/orders
+- GET /api/orders
+- POST /api/orders/:id/reorder
+- GET /api/orders/admin/all
 
-- `POST /api/admin/login`
-- `GET /api/admin/profile`
-- `GET /api/categories`
-- `GET /api/products`
-- `POST /api/admin/categories`
-- `PUT /api/admin/categories/:id`
-- `DELETE /api/admin/categories/:id`
-- `POST /api/admin/products`
-- `PUT /api/admin/products/:id`
-- `DELETE /api/admin/products/:id`
+## Security and Quality Notes
+
+- API key and JWT checks are applied on protected endpoints.
+- Role-based route protection is enforced in frontend and backend.
+- Centralized error handling and validation middleware are included.
+- Project is organized in reusable modules for maintainability.
+
+## Team
+
+Brand: Fashion Tech Riders
+

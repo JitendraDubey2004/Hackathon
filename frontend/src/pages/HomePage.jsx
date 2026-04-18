@@ -1,18 +1,19 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import { heroBanners, lifestyleTiles } from "../data/fashionAssets";
 import { api } from "../api/client";
 import { normalizeProduct } from "../utils/shop";
 import { useAppStore } from "../context/AppStore";
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const { addToCart } = useAppStore();
-  const categoriesQuery = useQuery({ queryKey: ["home-categories"], queryFn: api.listCategories });
-  const productsQuery = useQuery({ queryKey: ["home-products"], queryFn: () => api.listProducts({ page: 1, limit: 8 }) });
+  const contentQuery = useQuery({ queryKey: ["home-content"], queryFn: api.getHomeContent });
 
-  const products = (productsQuery.data?.items || []).map(normalizeProduct);
-  const categories = categoriesQuery.data || [];
+  const products = (contentQuery.data?.featuredProducts || []).map(normalizeProduct);
+  const heroBanners = contentQuery.data?.heroBanners || [];
+  const collectionTiles = contentQuery.data?.collectionTiles || [];
 
   return (
     <div className="page-stack">
@@ -35,7 +36,7 @@ export default function HomePage() {
         </div>
 
         <div className="hero-mosaic">
-          {heroBanners.slice(0, 3).map((banner) => (
+          {heroBanners.map((banner) => (
             <article key={banner.title} className="mosaic-card">
               <img src={banner.image} alt={banner.title} />
               <div>
@@ -50,7 +51,7 @@ export default function HomePage() {
       <section className="section-head">
         <div>
           <p className="eyebrow">Collections</p>
-          <h2>Shop by lifestyle</h2>
+          <h2>Shop by category</h2>
         </div>
         <Link className="text-link" to="/shop">
           View all products
@@ -58,14 +59,14 @@ export default function HomePage() {
       </section>
 
       <section className="tile-grid">
-        {lifestyleTiles.map((tile) => (
-          <article key={tile.title} className="tile-card">
+        {collectionTiles.slice(0, 4).map((tile) => (
+          <Link key={tile.id || tile.title} className="tile-card link-card" to={tile.id ? `/shop?category=${tile.id}` : "/shop"}>
             <img src={tile.image} alt={tile.title} />
             <div>
               <h3>{tile.title}</h3>
               <p>{tile.description}</p>
             </div>
-          </article>
+          </Link>
         ))}
       </section>
 
@@ -77,25 +78,64 @@ export default function HomePage() {
       </section>
 
       <section className="products-grid">
-        {products.map((product, index) => (
-          <ProductCard key={product.id} product={product} actionLabel="Add to cart" onAction={addToCart} />
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            actionLabel="Add to cart"
+            onAction={addToCart}
+            secondaryActionLabel="Buy now"
+            onSecondaryAction={(item) => {
+              addToCart(item);
+              navigate("/cart");
+            }}
+          />
         ))}
       </section>
 
       <section className="stats-band card-glass">
         <div>
-          <strong>{categories.length}+</strong>
+          <strong>{collectionTiles.length}+</strong>
           <span>fashion categories</span>
         </div>
-        <div>
+        {/* <div>
           <strong>Live</strong>
           <span>backend connected</span>
-        </div>
+        </div> */}
         {/* <div>
           <strong>Secure</strong>
           <span>JWT + API key</span>
         </div> */}
       </section>
+
+      <footer className="home-footer card-glass">
+        <div className="footer-brand">
+          <p className="eyebrow">Connect with us</p>
+          <h3>Stay close to new drops, orders, and admin updates.</h3>
+          <p>
+            A lightweight retail demo with live MongoDB-backed catalog, customer flow, and a separate admin portal.
+          </p>
+        </div>
+
+        <div className="footer-links">
+          <div>
+            <strong>Shop</strong>
+            <Link to="/shop">All products</Link>
+            <Link to="/cart">Cart</Link>
+            <Link to="/orders">Orders</Link>
+          </div>
+          <div>
+            <strong>Connect</strong>
+            <a href="mailto:@fashiontechriders.com">@fashiontechriders.com</a>
+            <a href="tel:+911234567890">+91 12345 67890</a>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+          </div>
+          <div>
+            <strong>Admin</strong>
+            <Link to="/admin/login">Admin login</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-export default function ProductCard({ product, actionLabel = "Add to cart", onAction }) {
+export default function ProductCard({ product, actionLabel = "Add to cart", onAction, secondaryActionLabel, onSecondaryAction }) {
   return (
     <article className="product-card">
       <div className="product-image">
@@ -15,9 +15,16 @@ export default function ProductCard({ product, actionLabel = "Add to cart", onAc
           <span>Tax {product.taxPercent}%</span>
           <span>Stock {product.stock}</span>
         </div>
-        <button type="button" className="primary-btn full-width" onClick={() => onAction(product)}>
-          {actionLabel}
-        </button>
+        <div className="product-actions">
+          <button type="button" className="primary-btn full-width" onClick={() => onAction(product)}>
+            {actionLabel}
+          </button>
+          {onSecondaryAction ? (
+            <button type="button" className="secondary-btn full-width" onClick={() => onSecondaryAction(product)}>
+              {secondaryActionLabel || "Buy now"}
+            </button>
+          ) : null}
+        </div>
       </div>
     </article>
   );

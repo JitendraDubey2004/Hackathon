@@ -1,6 +1,7 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const { recordStockChange } = require("../services/stockHistoryService");
+const { getProductFallbackImage } = require("../services/imageFallbacks");
 
 function buildProductPayload(body) {
   const title = body.title?.trim();
@@ -79,8 +80,16 @@ async function listProducts(req, res, next) {
       Product.countDocuments(filter)
     ]);
 
+    const itemsWithImages = items.map((item, index) => {
+      const product = item.toObject();
+      return {
+        ...product,
+        imageUrl: product.imageUrl || getProductFallbackImage(product.productId || product.title, index)
+      };
+    });
+
     return res.status(200).json({
-      items,
+      items: itemsWithImages,
       page,
       limit,
       total,
@@ -101,7 +110,11 @@ async function getProductById(req, res, next) {
       });
     }
 
-    return res.status(200).json(product);
+    const payload = product.toObject();
+    return res.status(200).json({
+      ...payload,
+      imageUrl: payload.imageUrl || getProductFallbackImage(payload.productId || payload.title)
+    });
   } catch (error) {
     return next(error);
   }
