@@ -403,6 +403,11 @@ textarea {
   font-size: 0.88rem;
 }
 
+.product-actions {
+  display: grid;
+  gap: 10px;
+}
+
 .toolbar {
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -516,31 +521,29 @@ textarea {
 }
 
 .site-header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  align-items: end;
-  padding: 28px;
-  border-radius: 28px;
+  align-items: flex-start;
+  padding: 24px;
+  padding-right: 360px;
+  border-radius: 24px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 248, 241, 0.88));
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
 }
 
-.brand-kicker {
-  margin: 0 0 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--accent);
-  font-size: 0.76rem;
-  font-weight: 800;
-}
-
 .brand-row {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.brand-row h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
 }
 
 .status-dot {
@@ -552,16 +555,91 @@ textarea {
 }
 
 .brand-subtitle {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   color: var(--muted);
-  max-width: 68ch;
+  max-width: 60ch;
+  font-size: 1.05rem;
 }
 
 .header-meta {
+  position: absolute;
+  top: 16px;
+  right: 18px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   justify-content: flex-end;
+}
+
+.account-shortcuts {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quick-link {
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: var(--text);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.quick-link.active {
+  background: linear-gradient(135deg, var(--accent), #ff7a18);
+  color: white;
+  border-color: transparent;
+}
+
+.avatar-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, var(--accent), #ff7a18);
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 10px 18px rgba(227, 74, 18, 0.25);
+}
+
+.account-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: min(320px, calc(100vw - 32px));
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  z-index: 10;
+}
+
+.account-heading {
+  display: grid;
+  gap: 4px;
+}
+
+.account-heading span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.account-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.menu-link {
+  text-decoration: none;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-weight: 600;
 }
 
 .top-nav {
@@ -628,7 +706,8 @@ textarea {
 
 .hero-mosaic {
   display: grid;
-  gap: 12px;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .mosaic-card {
@@ -637,7 +716,7 @@ textarea {
   background: white;
   border: 1px solid var(--line);
   display: grid;
-  grid-template-columns: 112px 1fr;
+  grid-template-columns: 100px 1fr;
   min-height: 112px;
 }
 
@@ -682,9 +761,20 @@ textarea {
   border: 1px solid var(--line);
 }
 
+.link-card {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.link-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 38px rgba(15, 23, 42, 0.15);
+}
+
 .tile-card img {
   width: 100%;
-  height: 200px;
+  height: 220px;
   object-fit: cover;
 }
 
@@ -713,11 +803,64 @@ textarea {
   font-size: 1.8rem;
 }
 
+.home-footer {
+  margin-top: 6px;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+.footer-brand h3 {
+  margin: 6px 0 0;
+  font-size: clamp(1.3rem, 2.6vw, 2rem);
+}
+
+.footer-brand p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.footer-links > div {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.footer-links strong {
+  color: var(--text);
+}
+
+.footer-links a,
+.footer-links span {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
 .filter-bar {
   display: flex;
   gap: 12px;
   align-items: center;
   padding: 18px;
+}
+
+.filter-bar input {
+  flex: 1;
+}
+
+.filter-bar select {
+  max-width: 280px;
 }
 
 .chips-row {
@@ -900,13 +1043,23 @@ textarea {
   }
 
   .site-header {
-    grid-template-columns: 1fr;
+    padding-right: 24px;
   }
 
   .header-meta,
   .status-stack,
   .toolbar {
     justify-content: flex-start;
+  }
+
+  .header-meta {
+    position: static;
+    margin-top: 12px;
+  }
+
+  .account-menu {
+    left: 0;
+    right: auto;
   }
 
   .top-nav,
@@ -933,10 +1086,14 @@ textarea {
   .site-header,
   .card-glass,
   .auth-form,
+
+  .product-actions {
+    gap: 8px;
+  }
   .auth-hero,
   .success-shell,
   .empty-page {
-    padding: 18px;
+    padding: 16px;
     border-radius: 20px;
   }
 
@@ -961,13 +1118,39 @@ textarea {
     justify-content: flex-start;
   }
 
+  .account-shortcuts {
+    flex-wrap: wrap;
+  }
+
+  .quick-link {
+    padding: 8px 10px;
+    font-size: 0.88rem;
+  }
+
+  .avatar-btn {
+    width: 42px;
+    height: 42px;
+  }
+
   .hero-grid,
   .tile-grid,
   .success-summary {
     grid-template-columns: 1fr;
   }
 
+  .home-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-links {
+    grid-template-columns: 1fr;
+  }
+
   .mosaic-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-mosaic {
     grid-template-columns: 1fr;
   }
 
