@@ -1,5 +1,3 @@
-import { getFallbackImage } from "../data/fashionAssets";
-
 export function money(value) {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(Number(value || 0));
 }
@@ -14,7 +12,7 @@ export function normalizeProduct(product, index = 0) {
     productId: product.productId,
     title: product.title,
     description: product.description || "",
-    imageUrl: product.imageUrl || getFallbackImage(index),
+    imageUrl: product.imageUrl || "",
     cost: Number(product.cost || 0),
     formattedPrice: money(product.cost),
     taxPercent: Number(product.taxPercent || 0),
